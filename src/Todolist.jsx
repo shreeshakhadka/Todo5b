@@ -1,44 +1,59 @@
-import { useState } from "react";
-import { useEffect } from "react";
-import React from "react";
+import { useEffect, useState } from "react";
 
-function Todolist(){
-    const[toDoTasks,seToDoTasks] = useState([]);
-    const[newTask,setNewTask] =useState("");
+function Todolist() {
 
-    useEffect(() => {
-        fetch('https://jsonplaceholder.typicode.com/todos/')
-          .then(response => response.json())
-          .then(data => setTasks(data));
-      }, []);
+  const[toDoTasks,setToDoTasks] = useState([]);
+  const[newTask,setNewTask] =useState("");
 
-    const InputChange = event => {
+  useEffect(() => {
+    fetch("https://jsonplaceholder.typicode.com/todos/")
+      .then((response) => response.json())
+      .then((data) => setToDoTasks(data)
+      )
+      .catch((error) => {
+        console.error("Error fetching tasks:", error);
+      });
+  }, []);
+
+  const handleChange = (event) => {
     setNewTask(event.target.value);
-    }
+  };
 
-    const AddNewTask = () => {
-          const newTask = {
-            id: tasks.length + 1,
-            title: newTask,
-            completed: false
-          };
-        setTasks((oldTaks) => [Task, ...oldTaks]);
-        };
+  const deleteButton = () => {
+    setToDoTasks((oldTasks) => oldTasks.filter((task) => task.id !== taskId));
+  };
 
-        return (
-            <div>
-              <h1>Todo List</h1>
-              <div>
-                <input type="text" value={newTask} onChange={handleInputChange} />
-                <button onClick={handleAddTask}>Add Task</button>
-              </div>
-              <ul>
-                {tasks.map(task => (
-                  <li key={task.id}>{task.title}</li>
-                ))}
-              </ul>
-            </div>
-          );
-        };
-    
+  const addTask = () => {
+    const newTask = {
+      id: toDoTasks.length + 1,
+      title: newTask,
+      completed: false,
+    };
 
+    setToDoTasks((prevTasks) => [newTask, ...prevTasks]);
+  };
+
+  return (
+    <div>
+      <h1>Todo App</h1>
+      <input type="text" value={newTask} onChange={handleChange}></input>
+      <button onClick={() => addTask()}>Add Task</button>
+      <ul>
+        {toDoTasks.map((task) => (
+          <li className="beauti-list" key={task.id}>
+            {task.title}
+            <button
+              onClick={() => {
+                deleteButton(task.id);
+              }}
+            >
+              Remove
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default Todolist;
